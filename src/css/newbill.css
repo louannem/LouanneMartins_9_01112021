@@ -22,12 +22,21 @@
   border-radius: 5px;
 }
 
+.red-border {
+  opacity: 0.5;
+  border: 2px solid red !important;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
 label {
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
 }
+
+#error-msg { color: red ; font-size: 12px; display: none;}
 
 .flex-col {
   margin-left: 50px;

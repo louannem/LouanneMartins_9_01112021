@@ -23,13 +23,24 @@ export default class NewBill {
     //Check here if format = jpg, jpeg, png using a regex
     const allowedExt = /(\.jpg|\.jpeg|\.png)$/i
     const SubmitBtn = document.querySelector('#btn-send-bill')
+    const borderChange = document.querySelector('input[type="file"]')
+    const errorMsg = document.querySelector('#error-msg')
+
     if(allowedExt.exec(filePath)) {
-      console.log(SubmitBtn)
       SubmitBtn.removeAttribute('disabled')
+      errorMsg.style.display = "none"
+
+      if(borderChange.classList.contains('red-border')) {
+        borderChange.classList.add('blue-border')
+        borderChange.classList.remove('red-border')
+      }
     }
     //Signals the error to the user it's the wrong extension 
     else {
       SubmitBtn.setAttribute('disabled', true)
+      errorMsg.style.display = "inline"
+      borderChange.classList.remove('blue-border')
+      borderChange.classList.add('red-border')
     }
 
     this.firestore
