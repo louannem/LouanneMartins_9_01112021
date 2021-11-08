@@ -19,6 +19,19 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
+
+    //Check here if format = jpg, jpeg, png using a regex
+    const allowedExt = /(\.jpg|\.jpeg|\.png)$/i
+    const SubmitBtn = document.querySelector('#btn-send-bill')
+    if(allowedExt.exec(filePath)) {
+      console.log(SubmitBtn)
+      SubmitBtn.removeAttribute('disabled')
+    }
+    //Signals the error to the user it's the wrong extension 
+    else {
+      SubmitBtn.setAttribute('disabled', true)
+    }
+
     this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
