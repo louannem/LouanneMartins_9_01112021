@@ -34,16 +34,8 @@ export default class NewBill {
         borderChange.classList.add('blue-border')
         borderChange.classList.remove('red-border')
       }
-    }
-    //Signals the error to the user it's the wrong extension 
-    else {
-      SubmitBtn.setAttribute('disabled', true)
-      errorMsg.style.display = "inline"
-      borderChange.classList.remove('blue-border')
-      borderChange.classList.add('red-border')
-    }
 
-    this.firestore
+      this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
       .put(file)
@@ -52,10 +44,18 @@ export default class NewBill {
         this.fileUrl = url
         this.fileName = fileName
       })
+    }
+    //Signals the error to the user it's the wrong extension 
+    else {
+      SubmitBtn.setAttribute('disabled', true)
+      errorMsg.style.display = "inline"
+      borderChange.classList.remove('blue-border')
+      borderChange.classList.add('red-border')
+    } 
   }
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
+    //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
@@ -75,6 +75,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   createBill = (bill) => {
     if (this.firestore) {
       this.firestore

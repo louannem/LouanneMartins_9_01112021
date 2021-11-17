@@ -1,10 +1,12 @@
-import { screen } from "@testing-library/dom"
+import { fireEvent, screen } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 import BillsUI from "../views/BillsUI.js"
 import  Bills  from "../containers/Bills"
 import { bills } from "../fixtures/bills.js"
 import usersTest from "../constants/usersTest.js"
-import ROUTES_PATH from "../constants/routes"
+import { ROUTES } from "../constants/routes"
+import { modal } from "../views/DashboardFormUI.js"
+import firebase from "../__mocks__/firebase"
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -24,6 +26,57 @@ describe("Given I am connected as an employee", () => {
       expect(arraySorted).toEqual(datesSorted)
     })
 
+    test("Then I click on the new bill and I go to the New Bill page", () => {
+      const html = BillsUI({ data : bills })
+      document.body.innerHTML = html
+
+      const onNavigate = pathname => { document.body.innerHTML = ROUTES({pathname}); };
+      const billsPage = new Bills({document, onNavigate, firestore: null, localStorage: window.localStorage});
+
+      //Retreives the button
+      const newBillBtn = screen.getByTestId('btn-new-bill')
+
+      //Adds the mock function and event listener
+      const mockCallBack = jest.fn(billsPage.handleClickNewBill)
+      newBillBtn.addEventListener('click', mockCallBack)
+
+      //Simulates a click on the button
+      fireEvent.click(newBillBtn)
+
+      //Checks if now on new bill form page
+      expect(screen.getByText("Envoyer une note de frais")).toBeTruthy()
+    })
+
+
+    describe("When I click on an eye icon", () => {
+      test("Then the modal appears on the page", () => {
+        const html = BillsUI({ data : bills })
+        document.body.innerHTML = html
+
+        const onNavigate = pathname => { document.body.innerHTML = ROUTES({pathname}); };
+        const billsPage = new Bills({document, onNavigate, firestore:null, localStorage: window.localStorage});
+
+        //Retreives the icon
+        const modalBtn = screen.getAllByTestId('icon-eye')
+
+        //Adds the mock function and event listener
+        const mockCallBack = jest.fn(billsPage.handleClickIconEye)
+        //Accessing JQuery with Jest
+        $.fn.modal = jest.fn();
+        
+        modalBtn.forEach(btn => { btn.addEventListener('click', e => mockCallBack(btn)) });
+
+        //Simulates a click on the button
+        modalBtn.forEach(btn => { fireEvent.click(btn) })
+
+        //Checks if the modal is open by checking the called function & reading the title
+        expect(mockCallBack).toHaveBeenCalled()
+        //const modal = document.getElementById('modaleFile')
+        //expect(document.getElementById('modaleFile')).toHaveClass('show')
+        expect(screen.getByText('Justificatif')).toBeTruthy()
+
+      })
+    })
 
   })
   
@@ -49,4 +102,42 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByText('Erreur')).toBeTruthy()
     })
   })
+
+
+  //Test d'integration GET Bills
+  describe("Given I am a user connected as Employee", () => {
+    describe("When I navigate to Dashboard", () => {
+      test("fetches bills from mock API GET", async () => {
+        const getSpy = jest.spyOn(firebase, "get")
+        const bills = await firebase.get()
+        expect(getSpy).toHaveBeenCalledTimes(1)
+        expect(bills.data.length).toBe(4)
+     })
+    })
+
+    test("fetches bills from an API and fails with 404 message error", async () => {
+      firebase.get.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 404"))
+      )
+      //Builds the interface with an error 404
+      const html = BillsUI({ data:[], loading: false, error: "Erreur 404" })
+      document.body.innerHTML = html
+
+      const message = await screen.getByText(/Erreur 404/)
+      expect(message).toBeTruthy()
+    })
+
+    test("fetches messages from an API and fails with 500 message error", async () => {
+      firebase.get.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 500"))
+      )
+      //Builds the interface with an error 500
+      const html = BillsUI({ data:[], loading: false, error: "Erreur 500" })
+      document.body.innerHTML = html
+      const message = await screen.getByText(/Erreur 500/)
+      expect(message).toBeTruthy()
+    })
+
+  })
+  
 })
