@@ -41,17 +41,32 @@ describe("Given I am connected as an employee", () => {
 
     describe("When I submit the form", () => {
       test("Then a new bill should be created", () => {
+        //Sets a user (employee + email)
+        Object.defineProperty(window, "localStorage", {
+          value: localStorageMock,
+        });
+        window.localStorage.setItem(
+          "user",
+          JSON.stringify({
+            type: "Employee",
+            email : "johndoe@billed.com"
+          })
+        );
+
         const html = NewBillUI()
         document.body.innerHTML = html
 
         const onNavigate = pathname => { document.body.innerHTML = ROUTES({pathname})} 
         const newBill = new NewBill({document, onNavigate, firestore: null, localStorage: localStorageMock });
 
-        const handleSubmit = jest.fn(newBill.handleSubmit)
+        //Mocks const
+        const mockCallBack = jest.fn(newBill.handleSubmit)
         const newBillForm = screen.getByTestId("form-new-bill")
-        newBillForm.addEventListener('submit', handleSubmit)
+
+        newBillForm.addEventListener('submit', mockCallBack)
         fireEvent.submit(newBillForm)
-        expect(handleSubmit).toHaveBeenCalled()
+        expect(mockCallBack).toHaveBeenCalled()
+        expect
       })
     })
   })
