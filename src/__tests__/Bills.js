@@ -1,5 +1,4 @@
 import { fireEvent, screen } from "@testing-library/dom"
-import userEvent from '@testing-library/user-event'
 import BillsUI from "../views/BillsUI.js"
 import  Bills  from "../containers/Bills"
 import { bills } from "../fixtures/bills.js"

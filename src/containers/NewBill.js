@@ -19,21 +19,16 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
+    const fileExt = fileName.split('.').pop()
+   
 
     //Check here if format = jpg, jpeg, png using a regex
-    const allowedExt = /(\.jpg|\.jpeg|\.png)$/i
-    const SubmitBtn = document.querySelector('#btn-send-bill')
-    const borderChange = document.querySelector('input[type="file"]')
+    const allowedExt = ["jpg", "jpeg", "png"]
     const errorMsg = document.querySelector('#error-msg')
 
-    if(allowedExt.exec(filePath)) {
-      SubmitBtn.removeAttribute('disabled')
-      errorMsg.style.display = "none"
 
-      if(borderChange.classList.contains('red-border')) {
-        borderChange.classList.add('blue-border')
-        borderChange.classList.remove('red-border')
-      }
+    if(allowedExt == fileExt) {
+      errorMsg.style.display = "none"
 
       this.firestore
       .storage
@@ -46,13 +41,11 @@ export default class NewBill {
       })
     }
     //Signals the error to the user it's the wrong extension 
-    else {
-      SubmitBtn.setAttribute('disabled', true)
+    else  {
       errorMsg.style.display = "inline"
-      borderChange.classList.remove('blue-border')
-      borderChange.classList.add('red-border')
     } 
   }
+  
   handleSubmit = e => {
     e.preventDefault()
     //console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)

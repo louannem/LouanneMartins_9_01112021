@@ -1,4 +1,4 @@
-import { screen, fireEvent } from "@testing-library/dom"
+import { screen, fireEvent, userEvent } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import { ROUTES } from '../constants/routes.js'
@@ -19,7 +19,7 @@ describe("Given I am connected as an employee", () => {
       expect(form).toBeTruthy()
     })
 
-    test("Then I upload a file in the form", async () => {
+    test("Then I upload a file in the form",  () => {
       const html = NewBillUI()
       document.body.innerHTML = html
 
@@ -36,7 +36,56 @@ describe("Given I am connected as an employee", () => {
       fireEvent.change(uploadBtn, { target: { files: [file] } })
       
       expect(mockCallBack).toHaveBeenCalled()
-      expect(file.type).toBe('jpg')
+    }) 
+
+    describe("When I upload a file with the wrong extension", () => {
+      test("Then an error message is displayed below",  () => {
+        const html = NewBillUI()
+        document.body.innerHTML = html
+  
+        const onNavigate = pathname => { document.body.innerHTML = ROUTES({pathname})} 
+        const newBillForm = new NewBill({document, onNavigate, firestore: null, localStorage: window.localStorage});
+  
+        //Mocks constants
+        const mockCallBack = jest.fn(newBillForm.handleChangeFile)
+        const file = new File(['filemock.txt'], 'filemock.txt', { type: 'txt' })
+        const uploadBtn = screen.getByTestId('file')
+        uploadBtn.addEventListener('change', mockCallBack)    
+  
+        //Simulate the event   
+        fireEvent.change(uploadBtn, { target: { files: [file] } })
+
+        //Retreives and test the error message
+        const errorMsg = document.querySelector('#error-msg')
+        expect(errorMsg.style.display).toEqual('inline')
+      })
+    })
+
+
+    describe("When I upload a file with the right extension", () => {
+      test("Then an error message is not displayed below",  () => {
+        const html = NewBillUI()
+        document.body.innerHTML = html
+  
+        const onNavigate = pathname => { document.body.innerHTML = ROUTES({pathname})} 
+        const newBillForm = new NewBill({document, onNavigate, firestore: null, localStorage: window.localStorage});
+  
+        //Mocks constants
+        const mockCallBack = jest.fn(newBillForm.handleChangeFile)
+        const file = new File(['filemock.jpg'], 'filemock.jpg', { type: 'jpg' })
+        const uploadBtn = screen.getByTestId('file')
+        uploadBtn.addEventListener('change', (e) => { mockCallBack(e) })
+
+        //Simulate the event   
+        fireEvent.change(uploadBtn, { target: { files: [file] } })
+
+        //Retreives and test the error message
+        const filePath = file.type
+        const allowedExt = "jpg" || "png" || "jpeg"
+ 
+        expect(allowedExt == filePath).toBeTruthy()
+         
+      })
     })
 
     describe("When I submit the form", () => {
