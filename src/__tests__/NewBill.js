@@ -5,8 +5,6 @@ import { ROUTES } from '../constants/routes.js'
 import firebase from "../__mocks__/firebase"
 import {localStorageMock} from "../__mocks__/localStorage" 
 
-
-
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     test("The new bill form should be rendered", () => {
