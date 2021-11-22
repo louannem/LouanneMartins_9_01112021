@@ -89,7 +89,7 @@ export default class {
   
   handleEditTicket(e, bill, bills) {
     console.log(bill.fileName)
-    if(this.openBill === undefined) this.openBill = false
+    if(this.openBill === undefined && this.id !== bill.id) this.openBill = false
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
 
