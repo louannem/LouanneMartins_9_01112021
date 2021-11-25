@@ -1,9 +1,11 @@
 import { screen, fireEvent } from "@testing-library/dom"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
+import BillsUI from "../views/BillsUI.js"
 import { ROUTES } from '../constants/routes.js'
 import firebase from "../__mocks__/firebase"
 import {localStorageMock} from "../__mocks__/localStorage" 
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
@@ -136,5 +138,28 @@ describe("Given I am a user connected as Employee", () => {
       expect(bills.data.length).toBe(5)
 
    })
+
+    test("fetches newly posted bills from an API and fails with 404 message error", async () => {
+      firebase.post.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 404"))
+      )
+      const html = BillsUI({ data:[], loading: false, error: "Erreur 404" })
+      document.body.innerHTML = html
+
+      const message = await screen.getByText(/Erreur 404/)
+      expect(message).toBeTruthy()
+    })
+
+    test("fetches bills from an API and fails with 500 message error", async () => {
+      firebase.post.mockImplementationOnce(() =>
+        Promise.reject(new Error("Erreur 500"))
+      )
+      const html = BillsUI({ data:[], loading: false, error: "Erreur 500" })
+      document.body.innerHTML = html
+
+      const message = await screen.getByText(/Erreur 500/)
+      expect(message).toBeTruthy()
+    })
+   
   })
 })

@@ -20,9 +20,9 @@ const row = (bill) => {
     </tr>
     `)
 }
-
+//Ajout du tri par date pour le test
 const rows = (data) => {
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+  return (data?.length) ? data.sort((a, b) => ((a.date < b.date) ? 1 : -1)).map(bill => row(bill)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {

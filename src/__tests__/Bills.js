@@ -15,12 +15,10 @@ describe("Given I am connected as an employee", () => {
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
       document.body.innerHTML = html
-      const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML)
+      const dates = screen.getAllByText(/^(19|20)\d\d[- \/\.](0[1-9]|1[012])[- \/\.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML)
       const antiChrono = (a, b) => ((a < b) ? 1 : -1)
       const datesSorted = [...dates].sort(antiChrono)
-      //Sorts the array to pass the test
-      const arraySorted = [...dates].sort(antiChrono)
-      expect(arraySorted).toEqual(datesSorted)
+      expect(dates).toEqual(datesSorted)
     })
 
     test("Then I click on the new bill and I go to the New Bill page", () => {
@@ -97,7 +95,6 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByText('Erreur')).toBeTruthy()
     })
   })
-
 
   //Test d'integration GET Bills
   describe("Given I am a user connected as Employee", () => {
