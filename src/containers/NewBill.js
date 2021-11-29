@@ -20,15 +20,14 @@ export default class NewBill {
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     const fileExt = fileName.split('.').pop()
-   
 
     //Check here if format = jpg, jpeg, png using a regex
     const allowedExt = ["jpg", "jpeg", "png"]
     const errorMsg = document.querySelector('#error-msg')
 
-
-    if(allowedExt == fileExt) {
-      errorMsg.style.display = "none"
+    //errorMsg.classList.remove('hidden')
+    if(allowedExt.includes(fileExt)) {
+      errorMsg.classList.add('hidden')
 
       this.firestore
       .storage
@@ -42,7 +41,7 @@ export default class NewBill {
     }
     //Signals the error to the user it's the wrong extension 
     else  {
-      errorMsg.style.display = "inline"
+      errorMsg.classList.remove('hidden')
     } 
   }
   

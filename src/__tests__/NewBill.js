@@ -50,8 +50,7 @@ describe("Given I am connected as an employee", () => {
         fireEvent.change(uploadBtn, { target: { files: [file] } })
 
         //Retreives and test the error message
-        const errorMsg = document.querySelector('#error-msg')
-        expect(errorMsg.style.display).toEqual('inline')
+        expect(screen.getByText('Veuillez télécharger un fichier au format JPG, JPEG ou PNG.')).toBeTruthy()
       })
     })
 
@@ -105,7 +104,7 @@ describe("Given I am connected as an employee", () => {
         newBillForm.addEventListener('submit', mockCallBack)
         fireEvent.submit(newBillForm)
         expect(mockCallBack).toHaveBeenCalled()
-        expect
+        
       })
     })
   })

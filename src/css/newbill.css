@@ -36,7 +36,8 @@ label {
   line-height: 16px;
 }
 
-#error-msg { color: red ; font-size: 12px; display: none;}
+#error-msg { color: red ; font-size: 12px; }
+.hidden { display : none}
 
 .flex-col {
   margin-left: 50px;
